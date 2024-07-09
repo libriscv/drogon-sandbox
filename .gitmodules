@@ -1,0 +1,6 @@
+[submodule "drogon"]
+	path = drogon
+	url = https://github.com/fwsGonzo/drogon.git
+[submodule "libriscv"]
+	path = sandbox/libriscv
+	url = https://github.com/libriscv/libriscv.git
