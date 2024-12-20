@@ -6,7 +6,7 @@ Multi-tenancy allows one server to be safely shared among many users, each of wh
 
 ## Design
 
-Specialized sandboxes are instantiated for each request and immediately destroyed after the request ends.
+Specialized sandboxes are instantiated for each request and immediately destroyed after the request ends in a ~microsecond.
 
 - [x] Ephemeral requests guarantees no request may affect another
 - [x] Hot-reloading of tenant programs avoiding service restart
@@ -104,7 +104,7 @@ Requests/sec: 889613.44
 Transfer/sec:    181.56MB
 ```
 
-A vanilla Drogon response took 8.5 micros, while the sandboxed request required 9.5 micros. We can say that the total overhead of a fully integrated multi-tenancy solution is ~1 microsecond at 800k req/s.
+A vanilla Drogon response took 8.5 micros, while the sandboxed request required 9.5 micros. We can say that the total overhead of a fully integrated multi-tenancy solution is ~1 microsecond at 800k req/s. At 99% latency percentile, they both required 17 microseconds, however Drogon executed 10% more requests in the same amount of time.
 
 ## Pythran test program
 
