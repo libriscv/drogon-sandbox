@@ -1,4 +1,4 @@
-# Multi-tenant Drogon
+# Drogon Sandbox
 
 ## Multi-tenancy
 
@@ -6,18 +6,17 @@ Multi-tenancy allows one server to be safely shared among many users, each of wh
 
 ## Design
 
-Specialized sandboxes are instantiated for each request and immediately destroyed after the request ends in a ~microsecond.
+Specialized sandboxes are instantiated for each request and immediately destroyed after the request, all within a single microsecond.
 
-- [x] Ephemeral requests guarantees no request may affect another
+- [x] Ephemeral sandboxes gives hard guarantee that no request leaves traces in another
 - [x] Hot-reloading of tenant programs avoiding service restart
-- [x] All Drogon platforms are supported
+- [x] Enforced memory- and CPU- limits
 
-
-Note: This project is still a work-in-progress.
+Note: This project is written like a production system, but contains only the necessary parts for realistic benchmarking. A real production system would have implemented a lot of observability, logging, metering etc.
 
 ## Benchmarks
 
-Hello World multi-tenancy responses with 8, 32 and 64 threads.
+Sandboxed 'Hello World' responses with 8, 32 and 64 threads.
 
 ```sh
 $ ./wrk -c8 -t8 http://127.0.0.1:8080/z --latency
@@ -85,7 +84,7 @@ With 64 threads, the sandboxes handle 1.7M req/s at an average of 39 micros/req.
 
 ## Drogon vanilla benchmarks
 
-A simple Drogon hello world HTTP response
+A simple Drogon hello world HTTP response, with no sandboxes involved:
 
 ```sh
 $ ./wrk -c8 -t8 http://127.0.0.1:8080/ --latency
