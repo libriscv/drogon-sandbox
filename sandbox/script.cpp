@@ -2,7 +2,7 @@
 
 #include <libriscv/native_heap.hpp>
 #include <stdexcept>
-#include "sandbox.hpp"
+#include "tenant_instance.hpp"
 inline timespec time_now();
 inline long nanodiff(timespec start_time, timespec end_time);
 

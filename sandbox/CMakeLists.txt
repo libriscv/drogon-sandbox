@@ -12,7 +12,7 @@ target_compile_definitions(riscv PUBLIC
 
 set(RISCV_SOURCES
 	machine_instance.cpp
-	sandbox.cpp
+	tenant_instance.cpp
 	script.cpp
 	script_functions.cpp
 )
