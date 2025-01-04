@@ -1,4 +1,5 @@
 #include "tenant_instance.hpp"
+#include "machine_instance.hpp"
 #include <stdexcept>
 
 //#define ENABLE_TIMING
@@ -16,8 +17,7 @@ TenantInstance::TenantInstance(const TenantConfig& conf)
 	: config{conf}
 {
 	try {
-		auto elf = file_loader(conf.filename);
-		auto shared_elf = std::make_shared<std::vector<uint8_t>>(std::move(elf));
+		auto shared_elf = std::make_shared<std::vector<uint8_t>>(file_loader(conf.filename));
 		this->machine =
 			std::make_shared<MachineInstance> (std::move(shared_elf), this);
 	} catch (const std::exception& e) {
@@ -27,19 +27,30 @@ TenantInstance::TenantInstance(const TenantConfig& conf)
 		machine = nullptr;
 	}
 }
+TenantInstance::~TenantInstance()
+{
+	SharedMachine release = nullptr;
+	/* Release the machine */
+	std::atomic_exchange(&this->machine, release);
+}
+
+TenantInstance::SharedMachine TenantInstance::get_current_instance() const
+{
+	return std::atomic_load(&this->machine);
+}
 
 Script* TenantInstance::vmfork()
 {
 #ifdef ENABLE_TIMING
 	TIMING_LOCATION(t0);
 #endif
-	auto program = this->machine;
+	SharedMachine program = this->get_current_instance();
 	/* First-time tenants could have no program */
 	if (UNLIKELY(program == nullptr))
 		return nullptr;
 
 	try {
-		auto* script = new Script{program->script, this, *program};
+		Script* script = new Script{program->script, this, *program};
 		script->assign_instance(std::move(program));
 		return script;
 
@@ -54,15 +65,21 @@ Script* TenantInstance::vmfork()
 #endif
 }
 
+TenantInstance::ForkCall::ForkCall(const Script& script, TenantInstance* tenant, MachineInstance& inst)
+	: script{script, tenant, inst}, cnt{0}
+{
+	/* No initialization */
+}
+
 TenantInstance::ForkCall TenantInstance::forkcall(Script::gaddr_t addr,
 	size_t bufcnt, riscv::vBuffer buffers[])
 {
-	auto program = this->machine;
-	ForkCall result {
-		.script = Script{program->script, this, *program},
-		.cnt = 0
-	};
-	auto& script = result.script;
+	SharedMachine program = this->get_current_instance();
+	if (UNLIKELY(program == nullptr))
+		throw std::runtime_error("No program loaded");
+
+	ForkCall result(program->script, this, *program);
+	Script& script = result.script;
 	script.assign_instance(std::move(program));
 
 	/* Call into the virtual machine */
@@ -77,7 +94,7 @@ TenantInstance::ForkCall TenantInstance::forkcall(Script::gaddr_t addr,
 
 	// TODO: perform check to see if the result
 	// is forging a response
-	auto& machine = script.machine();
+	Script::machine_t& machine = script.machine();
 	//const auto [type, data] = machine.sysargs<riscv::Buffer, riscv::Buffer> ();
 	auto cnt_addr = machine.cpu.reg(12);
 	auto cnt_len  = machine.cpu.reg(13);
@@ -85,6 +102,12 @@ TenantInstance::ForkCall TenantInstance::forkcall(Script::gaddr_t addr,
 	return result;
 }
 
+Script::gaddr_t TenantInstance::lookup(const char* name) const {
+	SharedMachine program = this->get_current_instance();
+	if (LIKELY(program != nullptr))
+		return program->lookup(name);
+	return 0x0;
+}
 
 #include <unistd.h>
 std::vector<uint8_t> file_loader(const std::string& filename)

@@ -39,7 +39,7 @@ Script::Script(
 	const TenantInstance* tenant, const MachineInstance& inst)
 	: m_machine(binary, riscv::MachineOptions<MARCH>{
 		.memory_max = tenant->config.max_memory,
-		.verbose_loader = false,
+		.verbose_loader = true,
 		.use_memory_arena = true,
 	  }),
 	  m_vrm(tenant), m_inst(inst)

@@ -1,37 +1,32 @@
 #pragma once
 #include "script.hpp"
-#include "machine_instance.hpp"
 #include "tenant.hpp"
+struct MachineInstance;
 
 struct TenantInstance
 {
+	using SharedMachine = std::shared_ptr<MachineInstance>;
+
 	struct ForkCall {
 		Script script;
 		size_t cnt;
+
+		ForkCall(const Script& script, TenantInstance* tenant, MachineInstance& inst);
 	};
 	ForkCall forkcall(Script::gaddr_t addr, size_t cnt, riscv::vBuffer[]);
 	Script* vmfork();
 	bool no_program_loaded() const noexcept { return this->machine == nullptr; }
 
-	inline Script::gaddr_t lookup(const char* name) const {
-		auto program = machine;
-		if (LIKELY(program != nullptr))
-			return program->lookup(name);
-		return 0x0;
-	}
-
-	inline auto callsite(const char* name) {
-		auto program = machine;
-		if (LIKELY(program != nullptr)) {
-			auto addr = program->lookup(name);
-			return program->script.callsite(addr);
-		}
-		return decltype(program->script.callsite(0)) {};
-	}
+	Script::gaddr_t lookup(const char* name) const;
 
 	TenantInstance(const TenantConfig&);
+	~TenantInstance();
 
 	const TenantConfig config;
+
+private:
+	inline SharedMachine get_current_instance() const;
+
 	/* Hot-swappable machine */
-	std::shared_ptr<MachineInstance> machine = nullptr;
+	SharedMachine machine = nullptr;
 };

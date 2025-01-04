@@ -38,7 +38,7 @@ public:
 
 	std::string symbol_name(gaddr_t address) const;
 	gaddr_t resolve_address(std::string_view name) const;
-	auto    callsite(gaddr_t addr) const { return machine().memory.lookup(addr); }
+	riscv::Memory<MARCH>::Callsite callsite(gaddr_t addr) const { return machine().memory.lookup(addr); }
 
 	void print_backtrace(const gaddr_t addr);
 

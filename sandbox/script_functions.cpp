@@ -55,7 +55,7 @@ APICALL(set_decision)
 {
 }
 
-APICALL(synth)
+APICALL(create_response)
 {
 	machine.stop();
 }
@@ -92,7 +92,7 @@ void Script::setup_syscall_interface()
 
 		{ECALL_MY_NAME, my_name},
 		{ECALL_SET_DECISION, set_decision},
-		{ECALL_SYNTH, synth},
+		{ECALL_CREATE_RESPONSE, create_response},
 	});
 }
 
