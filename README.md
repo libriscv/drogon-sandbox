@@ -23,61 +23,61 @@ $ ./wrk -c8 -t8 http://127.0.0.1:8080/z --latency
 Running 10s test @ http://127.0.0.1:8080/z
   8 threads and 8 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     9.32us    2.44us 235.00us   91.45%
-    Req/Sec   102.69k    15.58k  123.47k    84.41%
+    Latency     9.34us    2.86us 535.00us   92.37%
+    Req/Sec   102.71k    10.52k  114.48k    87.25%
   Latency Distribution
      50%    9.00us
      75%   10.00us
      90%   11.00us
-     99%   18.00us
-  8255685 requests in 10.10s, 1.65GB read
-Requests/sec: 817438.99
-Transfer/sec:    166.83MB
+     99%   17.00us
+  8257941 requests in 10.10s, 1.65GB read
+Requests/sec: 817653.30
+Transfer/sec:    166.87MB
 
 $ ./wrk -c16 -t16 http://127.0.0.1:8080/z --latency
 Running 10s test @ http://127.0.0.1:8080/z
   16 threads and 16 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    11.96us    3.40us 577.00us   82.96%
-    Req/Sec    80.60k    14.62k  112.99k    69.37%
+    Latency    12.09us    3.69us 395.00us   79.30%
+    Req/Sec    79.84k    10.44k  101.40k    69.43%
   Latency Distribution
      50%   11.00us
      75%   13.00us
      90%   17.00us
-     99%   21.00us
-  12959120 requests in 10.10s, 2.58GB read
-Requests/sec: 1283098.97
-Transfer/sec:    261.86MB
+     99%   22.00us
+  12839750 requests in 10.10s, 2.56GB read
+Requests/sec: 1271316.75
+Transfer/sec:    259.46MB
 
 $ ./wrk -c32 -t32 http://127.0.0.1:8080/z --latency
 Running 10s test @ http://127.0.0.1:8080/z
   32 threads and 32 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    30.10us  103.81us   3.99ms   98.47%
-    Req/Sec    48.79k    12.17k   70.01k    63.33%
+    Latency    19.82us   12.48us   3.02ms   93.20%
+    Req/Sec    50.32k     9.68k   67.46k    59.62%
   Latency Distribution
      50%   17.00us
      75%   24.00us
-     90%   32.00us
-     99%  316.00us
-  15675777 requests in 10.10s, 3.12GB read
-Requests/sec: 1552154.56
-Transfer/sec:    316.77MB
+     90%   30.00us
+     99%   47.00us
+  16184956 requests in 10.10s, 3.23GB read
+Requests/sec: 1602566.73
+Transfer/sec:    327.06MB
 
 $ ./wrk -c64 -t64 http://127.0.0.1:8080/z --latency
 Running 10s test @ http://127.0.0.1:8080/z
   64 threads and 64 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency    51.66us  282.19us  14.30ms   98.78%
-    Req/Sec    30.96k    12.06k   83.88k    76.31%
+    Latency    38.25us  126.75us   8.85ms   99.10%
+    Req/Sec    30.95k    13.14k   69.93k    73.36%
   Latency Distribution
-     50%   28.00us
+     50%   29.00us
      75%   42.00us
-     90%   60.00us
-     99%  452.00us
-  19893994 requests in 10.10s, 3.96GB read
-Requests/sec: 1969675.07
-Transfer/sec:    401.98MB
+     90%   61.00us
+     99%  155.00us
+  19907514 requests in 10.10s, 3.97GB read
+Requests/sec: 1971164.72
+Transfer/sec:    402.29MB
 ```
 
 With 64 threads, the sandboxes handle ~2M req/s at an average of 51 micros/req.
