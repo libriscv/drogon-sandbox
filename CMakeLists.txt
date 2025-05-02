@@ -3,7 +3,6 @@ project (drogon-riscv CXX)
 #set (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++20 -O2 -g -flto=thin -fdiagnostics-color")
-set(CMAKE_CXX_LINK_FLAGS "-fuse-ld=lld-18")
 
 option(NATIVE       "Enable host CPU features" ON)
 option(USE_JEMALLOC "Use jemalloc as system allocator" ON)
